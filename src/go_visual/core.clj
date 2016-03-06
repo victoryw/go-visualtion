@@ -21,8 +21,8 @@
   [pipeline-instance]
   {:name (:name pipeline-instance)
    :counter (:counter pipeline-instance)
-   :statges-run-times   (reduce + (map (comp string2number/to-number :counter) (:statges pipeline-data)))
-   :statges ((comp count :statges) pipeline-data)})
+   :statges-run-times   (reduce + (map (comp string2number/to-number :counter) (:statges pipeline-instance)))
+   :statges ((comp count :statges) pipeline-instance)})
    
    
 (defn -main
