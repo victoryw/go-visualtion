@@ -20,8 +20,9 @@
 (defn write-to-site-json
   [statis]
   (spit "../go-visual-site/data.json" (json/write-str
-   {:categories (map #(format "%s-%s" (:name %) (:counter %)) statis)
-    :data (map #(- (:statges-run-times %) (:statges %)) statis)})))
+                                       { :title (:name (first statis))
+                                         :categories (map #(format "%s-%s" (:name %) (:counter %)) statis)
+                                         :data (map #(- (:statges-run-times %) (:statges %)) statis)})))
 
 (defn statistic-pipeline-instace
   [pipeline-instance]
@@ -33,9 +34,8 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [& {:keys [url username password]}]
-  (def statis 
-    (map (comp  statistic-pipeline-instace 
-                extract-pipeline-instance-history)
-         (take 15 (:pipelines (fetch-pipeline-datas url username password)))))
-  (println statis))
+  (write-to-site-json 
+   (map (comp  statistic-pipeline-instace 
+               extract-pipeline-instance-history)
+        (take 15 (:pipelines (fetch-pipeline-datas url username password))))))
 
