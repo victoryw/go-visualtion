@@ -4,7 +4,7 @@
   (:require [clojure.data.json :as json])
   (:require [go-visual.string2number :as string2number])
   (:require [clojure.tools.cli :refer [parse-opts]])
-  (:require [clojure.java.io :as io]))
+  (:require [go-visual.command-line-paramters :as paramters]))
 
 (defn extract-pipeline-instance-history 
   [pipeline]
@@ -33,26 +33,11 @@
    :statges-run-times   (reduce + (map (comp string2number/to-number :counter) (:statges pipeline-instance)))
    :statges ((comp count :statges) pipeline-instance)})
 
-(def cli-options
-  [["-l" "--url url" "server url" 
-    :default "../go-visual-site/" 
-    :parse-fn #(str %)]
-   ["-u" "--username userrname" "username" 
-    :default "" 
-    :parse-fn #(str %)]
-   ["-p" "--password password" "password" 
-    :default ""  
-    :parse-fn #(str %)]
-   ["-t" "--target target" "the folder of flush result named as data.json"
-    :default "../go-visual-site/data.json"
-    :parse-fn #(str (io/file % "data.json"))]
-   ["-h" "--help"]])
-
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
 
-  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
+  (let [{:keys [options arguments errors summary]} (parse-opts args paramters/cli-options)
         {:keys [url username password target]} options]
     (write-to-site-json 
      (map (comp  statistic-pipeline-instace 
