@@ -3,7 +3,8 @@
   (:require [clj-http.client :as client])
   (:require [clojure.data.json :as json])
   (:require [go-visual.string2number :as string2number])
-  (:require [clojure.tools.cli :refer [parse-opts]]))
+  (:require [clojure.tools.cli :refer [parse-opts]])
+  (:require [clojure.java.io :as io]))
 
 (defn extract-pipeline-instance-history 
   [pipeline]
@@ -19,11 +20,11 @@
                  :key-fn keyword))
 
 (defn write-to-site-json
-  [statis]
-  (spit "../go-visual-site/data.json" (json/write-str
-                                       {:title (:name (first statis))
-                                        :categories (map #(:counter %) statis)
-                                        :data (map #(- (:statges-run-times %) (:statges %)) statis)})))
+  [statis output-file-des]
+  (spit output-file-des (json/write-str
+                         {:title (:name (first statis))
+                          :categories (map #(:counter %) statis)
+                          :data (map #(- (:statges-run-times %) (:statges %)) statis)})))
 
 (defn statistic-pipeline-instace
   [pipeline-instance]
@@ -34,7 +35,7 @@
 
 (def cli-options
   [["-l" "--url url" "server url" 
-    :default "" 
+    :default "../go-visual-site/" 
     :parse-fn #(str %)]
    ["-u" "--username userrname" "username" 
     :default "" 
@@ -42,17 +43,20 @@
    ["-p" "--password password" "password" 
     :default ""  
     :parse-fn #(str %)]
+   ["-t" "--target target" "the folder of flush result named as data.json"
+    :default "../go-visual-site/data.json"
+    :parse-fn #(str (io/file % "data.json"))]
    ["-h" "--help"]])
-
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
 
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-    {:keys [url username password]} options]
+        {:keys [url username password target]} options]
     (write-to-site-json 
      (map (comp  statistic-pipeline-instace 
                  extract-pipeline-instance-history)
-          (take 15 (:pipelines (fetch-pipeline-datas url username password)))))))
+          (take 15 (:pipelines (fetch-pipeline-datas url username password)))) 
+     target)))
 
