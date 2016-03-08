@@ -19,13 +19,6 @@
   (json/read-str (get (client/get url {:basic-auth [username password]}) :body)
                  :key-fn keyword))
 
-(defn write-to-site-json
-  [statis output-file-des]
-  (spit output-file-des (json/write-str
-                         {:title (:name (first statis))
-                          :categories (map #(:counter %) statis)
-                          :data (map #(- (:statges-run-times %) (:statges %)) statis)})))
-
 (defn statistic-pipeline-instace
   [pipeline-instance]
   {:name (:name pipeline-instance)
@@ -33,15 +26,24 @@
    :statges-run-times   (reduce + (map (comp string2number/to-number :counter) (:statges pipeline-instance)))
    :statges ((comp count :statges) pipeline-instance)})
 
+(defn statistic-each-pipeline-stage-run-time
+  [url username password]
+  (map (comp  statistic-pipeline-instace 
+              extract-pipeline-instance-history)
+       (:pipelines (fetch-pipeline-datas url username password))))
+
+(defn write-to-site-json
+  [statis output-file-des]
+  (spit output-file-des (json/write-str
+                         {:title (:name (first statis))
+                          :categories (map #(:counter %) statis)
+                          :data (map #(- (:statges-run-times %) (:statges %)) statis)})))
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
 
-  (let [{:keys [options arguments errors summary]} (parse-opts args paramters/cli-options)
+  (let [{:keys [options arguments errors summary]} (parse-opts args (paramters/cli-options))
         {:keys [url username password target]} options]
-    (write-to-site-json 
-     (map (comp  statistic-pipeline-instace 
-                 extract-pipeline-instance-history)
-          (take 15 (:pipelines (fetch-pipeline-datas url username password)))) 
-     target)))
+    (write-to-site-json (statistic-each-pipeline-stage-run-time url username password) target)))
 
