@@ -23,7 +23,7 @@
   [statis]
   (spit "../go-visual-site/data.json" (json/write-str
                                        {:title (:name (first statis))
-                                        :categories (map #(format "%s-%s" (:name %) (:counter %)) statis)
+                                        :categories (map #(:counter %) statis)
                                         :data (map #(- (:statges-run-times %) (:statges %)) statis)})))
 
 (defn statistic-pipeline-instace
