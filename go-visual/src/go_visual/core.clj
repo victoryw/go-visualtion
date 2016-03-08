@@ -49,8 +49,8 @@
   "I don't do a whole lot ... yet."
   [& args]
 
-  (let [{:keys [url username password]} (:options (parse-opts args cli-options))]
-    ;; Handle help and error conditions
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
+    {:keys [url username password]} options]
     (write-to-site-json 
      (map (comp  statistic-pipeline-instace 
                  extract-pipeline-instance-history)
