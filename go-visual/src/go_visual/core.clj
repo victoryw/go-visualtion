@@ -4,6 +4,8 @@
   (:require [clojure.data.json :as json])
   (:require [go-visual.string2number :as string2number]))
 
+(require '[clojure.tools.cli :refer [parse-opts]])
+
 (defn extract-pipeline-instance-history 
   [pipeline]
   {:name (:name pipeline) 
@@ -20,9 +22,9 @@
 (defn write-to-site-json
   [statis]
   (spit "../go-visual-site/data.json" (json/write-str
-                                       { :title (:name (first statis))
-                                         :categories (map #(format "%s-%s" (:name %) (:counter %)) statis)
-                                         :data (map #(- (:statges-run-times %) (:statges %)) statis)})))
+                                       {:title (:name (first statis))
+                                        :categories (map #(format "%s-%s" (:name %) (:counter %)) statis)
+                                        :data (map #(- (:statges-run-times %) (:statges %)) statis)})))
 
 (defn statistic-pipeline-instace
   [pipeline-instance]
@@ -31,11 +33,27 @@
    :statges-run-times   (reduce + (map (comp string2number/to-number :counter) (:statges pipeline-instance)))
    :statges ((comp count :statges) pipeline-instance)})
 
+(def cli-options
+  [["-l" "--url url" "server url" 
+    :default "" 
+    :parse-fn #(str %)]
+   ["-u" "--username userrname" "username" 
+    :default "" 
+    :parse-fn #(str %)]
+   ["-p" "--password password" "password" 
+    :default ""  
+    :parse-fn #(str %)]
+   ["-h" "--help"]])
+
+
 (defn -main
   "I don't do a whole lot ... yet."
-  [& {:keys [url username password]}]
-  (write-to-site-json 
-   (map (comp  statistic-pipeline-instace 
-               extract-pipeline-instance-history)
-        (take 15 (:pipelines (fetch-pipeline-datas url username password))))))
+  [& args]
+
+  (let [{:keys [url username password]} (:options (parse-opts args cli-options))]
+    ;; Handle help and error conditions
+    (write-to-site-json 
+     (map (comp  statistic-pipeline-instace 
+                 extract-pipeline-instance-history)
+          (take 15 (:pipelines (fetch-pipeline-datas url username password)))))))
 
