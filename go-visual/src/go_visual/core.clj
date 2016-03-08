@@ -2,9 +2,8 @@
   (:gen-class)
   (:require [clj-http.client :as client])
   (:require [clojure.data.json :as json])
-  (:require [go-visual.string2number :as string2number]))
-
-(require '[clojure.tools.cli :refer [parse-opts]])
+  (:require [go-visual.string2number :as string2number])
+  (:require [clojure.tools.cli :refer [parse-opts]]))
 
 (defn extract-pipeline-instance-history 
   [pipeline]
