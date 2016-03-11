@@ -16,7 +16,12 @@ myChart.setOption({
     yAxis: {},
     series: [{
         name:'trigger count',
-        type: 'line',
+        type: 'bar',
+        data: []
+    },
+    {
+        name:'statges',
+        type: 'bar',
         data: []
     }]
 });
@@ -35,7 +40,10 @@ $.get('data.json').done(function (data) {
             data: data.categories
         },
         series: [{
-            data: data.data
+            data: data.statgesRunTimes
+        },
+        {
+            data: data.statges
         }]
     });
 });
