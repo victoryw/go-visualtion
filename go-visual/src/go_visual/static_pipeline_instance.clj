@@ -26,18 +26,22 @@
 
 (defn statis-pipeline-success-status
   [pipelines]
-  (sort-by :counter < (map (fn [pipeline] 
-                            {:name (:name pipeline) 
-                             :counter (:counter pipeline) 
-                             :status  (every? #(and (true? (:scheduled %)) (= (str (:result %)) "Passed")) (:stages pipeline))})
-                       pipelines)))
+  (map 
+   (fn [pipeline] 
+     {:name (:name pipeline) 
+      :counter (:counter pipeline) 
+      :status  (every? 
+                #(and 
+                  (true? (:scheduled %)) 
+                  (= (str (:result %)) "Passed")) 
+                (:stages pipeline))})
+   pipelines))
 
 (defn statis-pipeline-accumulate-success-counter
   [fn-get-last-success-rate last-accumulate-success-list pipeline-instance]
   (if (true? (:status pipeline-instance)) 
     (assoc pipeline-instance :success (+ 1 (fn-get-last-success-rate last-accumulate-success-list)))
     (assoc pipeline-instance :success 0)))
-    
 
 (defn extract-last-pipeline-continue-failure-counter 
   [last-result]
@@ -47,16 +51,16 @@
 (defn statis-accumulate-pipeline-failure-counter
   [pipelines]
   (flatten 
-    (reduce
-      (fn [last-accumulate-result-list pipeline-instance]
-        (list 
-          last-accumulate-result-list
-          (statis-pipeline-accumulate-success-counter 
-            extract-last-pipeline-continue-failure-counter 
-            last-accumulate-result-list 
-            pipeline-instance))) 
-      '() 
-      pipelines)))
+   (reduce
+    (fn [last-accumulate-result-list pipeline-instance]
+      (list 
+       last-accumulate-result-list
+       (statis-pipeline-accumulate-success-counter 
+        extract-last-pipeline-continue-failure-counter 
+        last-accumulate-result-list 
+        pipeline-instance))) 
+    '() 
+    pipelines)))
 
 (defn statistic-each-pipeline-stage-run-time
   [url username password]
@@ -67,8 +71,9 @@
     (fn [statistic-pipeline status-pipeline] 
       (assoc statistic-pipeline :status (:status status-pipeline))) 
     (sort-by :counter < 
-      (map 
-        (comp  statistic-pipeline-instace extract-pipeline-instance-history) 
-        pipelines))
-    (statis-pipeline-success-status pipelines))))
+             (map 
+              (comp  statistic-pipeline-instace extract-pipeline-instance-history) 
+              pipelines))
+    (sort-by :counter < 
+             (statis-pipeline-success-status pipelines)))))
 
