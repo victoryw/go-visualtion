@@ -10,8 +10,8 @@
   (spit output-file-des (json/write-str
                          {:title (:name (first statis))
                           :categories (map #(:counter %) statis)
-                          :statgesRunTimes (map #(:statges-run-times %) statis)
-                          :statges (map #(:statges %) statis)
+                          :pipelineRunTimes (map #(:pipeline-run-times %) statis)
+                          :countinueFailurCount (map #(:fail %) statis)
                           :status (map #(:status %) statis)})))
 
 (defn -main

@@ -20,21 +20,40 @@
   [pipeline-instance]
   {:name (:name pipeline-instance)
    :counter (:counter pipeline-instance)
-   :statges-run-times   (reduce + (map (comp string2number/to-number :counter) (:statges pipeline-instance)))
-   :statges ((comp count :statges) pipeline-instance)})
+   :pipeline-run-times   (+ 1 (- 
+                               (reduce + (map (comp string2number/to-number :counter) (:statges pipeline-instance))) 
+                               ((comp count :statges) pipeline-instance)))})
 
-(defn statis-pipeline-success-rate
+(defn statis-pipeline-success-status
   [pipelines]
-  (map (fn [pipeline] 
+  (sort-by :counter < (map (fn [pipeline] 
          {:name (:name pipeline) 
           :counter (:counter pipeline) 
-          :status  ((fn [stages] (not (every? (comp not empty? :jobs) stages))) (:stages pipeline))})
-       pipelines))
+          :status  (every? #(and (true? (:scheduled %)) (= (str (:result %)) "Passed")) (:stages pipeline))})
+       pipelines)))
+
+(defn statis-pipeline-continue-failure-counter
+  [last-result-failure-counter pipeline-instance]
+  (if (true? (:status pipeline-instance)) 
+    (assoc pipeline-instance :fail 0)
+    (assoc pipeline-instance :fail (+ 1 last-result-failure-counter))))
+
+(defn extract-last-pipeline-continue-failure-counter 
+  [last-result]
+  (if (empty? last-result) 0
+      (if (list? last-result) (:fail (last last-result)) (:fail last-result))))
+
+(defn statis-accumulate-pipeline-failure-counter
+  [pipelines]
+  (flatten (reduce #(list % (statis-pipeline-continue-failure-counter (extract-last-pipeline-continue-failure-counter %) %2)) '() pipelines)))
 
 (defn statistic-each-pipeline-stage-run-time
   [url username password]
   (def pipelines (:pipelines (fetch-pipeline-datas url username password)))
-  (map 
-   (fn [statistic-pipeline status-pipeline] (assoc statistic-pipeline :status (:status status-pipeline)))
-   (map (comp  statistic-pipeline-instace extract-pipeline-instance-history) pipelines) (statis-pipeline-success-rate pipelines)))
+  ; (def statis (sort-by :counter < (map (comp  statistic-pipeline-instace extract-pipeline-instance-history) pipelines)))
+  (statis-accumulate-pipeline-failure-counter 
+   (map  
+    (fn [statistic-pipeline status-pipeline] (assoc statistic-pipeline :status (:status status-pipeline))) 
+    (sort-by :counter < (map (comp  statistic-pipeline-instace extract-pipeline-instance-history) pipelines))
+    (statis-pipeline-success-status pipelines))))
 

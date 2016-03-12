@@ -4,24 +4,32 @@ var myChart = echarts.init(document.getElementById('main'));
 // 显示标题，图例和空的坐标轴
 myChart.setOption({
     title: {
-        text: ''
+        text: '',
+        x: 'center',
+       align: 'right'
     },
     tooltip: {},
     legend: {
-        data:['重试率']
+        data:['pipeline 运行次数','pipeline 连续失败'],
+        x: 'left'
     },
     xAxis: {
         data: []
     },
-    yAxis: {},
+    yAxis: [
+      {
+          name: '次数',
+          type: 'value'
+      }
+    ],
     series: [{
-        name:'trigger count',
+        name:'pipeline 运行次数',
         type: 'bar',
         data: []
     },
     {
-        name:'statges',
-        type: 'bar',
+        name:'pipeline 连续失败',
+        type: 'line',
         data: []
     }]
 });
@@ -33,17 +41,14 @@ $.get('data.json').done(function (data) {
         title:{
           text: data.title
         },
-        legend: {
-            data:[data.name]
-        },
         xAxis: {
             data: data.categories
         },
         series: [{
-            data: data.statgesRunTimes
+            data: data.pipelineRunTimes
         },
         {
-            data: data.statges
+            data: data.countinueFailurCount
         }]
     });
 });
