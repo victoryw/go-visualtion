@@ -32,20 +32,29 @@
                              :status  (every? #(and (true? (:scheduled %)) (= (str (:result %)) "Passed")) (:stages pipeline))})
                        pipelines)))
 
-(defn statis-pipeline-continue-failure-counter
-  [last-result-failure-counter pipeline-instance]
+(defn statis-pipeline-accumulate-success-counter
+  [last-result-success-counter pipeline-instance]
   (if (true? (:status pipeline-instance)) 
-    (assoc pipeline-instance :fail 0)
-    (assoc pipeline-instance :fail (+ 1 last-result-failure-counter))))
+    (assoc pipeline-instance :success (+ 1 last-result-success-counter))
+    (assoc pipeline-instance :success 0)))
+    
 
 (defn extract-last-pipeline-continue-failure-counter 
   [last-result]
   (if (empty? last-result) 0
-      (if (list? last-result) (:fail (last last-result)) (:fail last-result))))
+      (if (list? last-result) (:success (last last-result)) (:success last-result))))
 
 (defn statis-accumulate-pipeline-failure-counter
   [pipelines]
-  (flatten (reduce #(list % (statis-pipeline-continue-failure-counter (extract-last-pipeline-continue-failure-counter %) %2)) '() pipelines)))
+  (flatten 
+    (reduce 
+      #(list 
+        % 
+        (statis-pipeline-accumulate-success-counter
+          (extract-last-pipeline-continue-failure-counter  %) 
+          %2)) 
+      '() 
+      pipelines)))
 
 (defn statistic-each-pipeline-stage-run-time
   [url username password]

@@ -10,7 +10,7 @@ myChart.setOption({
     },
     tooltip: {},
     legend: {
-        data:['pipeline 运行次数','pipeline 连续失败'],
+        data:['pipeline 运行次数','pipeline 连续成功'],
         x: 'left'
     },
     xAxis: {
@@ -28,7 +28,7 @@ myChart.setOption({
         data: []
     },
     {
-        name:'pipeline 连续失败',
+        name:'pipeline 连续成功',
         type: 'line',
         data: []
     }]
@@ -48,7 +48,7 @@ $.get('data.json').done(function (data) {
             data: data.pipelineRunTimes
         },
         {
-            data: data.countinueFailurCount
+            data: data.countinueSuccessCount
         }]
     });
 });

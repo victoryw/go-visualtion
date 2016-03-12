@@ -11,7 +11,7 @@
                          {:title (:name (first statis))
                           :categories (map #(:counter %) statis)
                           :pipelineRunTimes (map #(:pipeline-run-times %) statis)
-                          :countinueFailurCount (map #(:fail %) statis)
+                          :countinueSuccessCount (map #(:success %) statis)
                           :status (map #(:status %) statis)})))
 
 (defn -main
