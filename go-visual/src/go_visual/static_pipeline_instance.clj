@@ -27,10 +27,10 @@
 (defn statis-pipeline-success-status
   [pipelines]
   (sort-by :counter < (map (fn [pipeline] 
-         {:name (:name pipeline) 
-          :counter (:counter pipeline) 
-          :status  (every? #(and (true? (:scheduled %)) (= (str (:result %)) "Passed")) (:stages pipeline))})
-       pipelines)))
+                            {:name (:name pipeline) 
+                             :counter (:counter pipeline) 
+                             :status  (every? #(and (true? (:scheduled %)) (= (str (:result %)) "Passed")) (:stages pipeline))})
+                       pipelines)))
 
 (defn statis-pipeline-continue-failure-counter
   [last-result-failure-counter pipeline-instance]
