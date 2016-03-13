@@ -12,17 +12,17 @@
   [pipeline]
   {:name (:name pipeline) 
    :counter (:counter pipeline)
-   :statges (map 
-             (fn [stages-map] {:name (get stages-map :name) :counter (get stages-map :counter)}) 
-             (:stages pipeline))})
+   :stages (map 
+            (fn [stages-map] {:name (get stages-map :name) :counter (get stages-map :counter)}) 
+            (:stages pipeline))})
 
 (defn statistic-pipeline-instace
   [pipeline-instance]
   {:name (:name pipeline-instance)
    :counter (:counter pipeline-instance)
    :pipeline-run-times   (+ 1 (- 
-                               (reduce + (map (comp string2number/to-number :counter) (:statges pipeline-instance))) 
-                               ((comp count :statges) pipeline-instance)))})
+                               (reduce + (map (comp string2number/to-number :counter) (:stages pipeline-instance))) 
+                               ((comp count :stages) pipeline-instance)))})
 
 (defn statis-pipeline-success-status
   [pipelines]
