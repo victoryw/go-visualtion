@@ -14,6 +14,14 @@
               {:name "test-pipeline" 
                :counter 13 
                :stages [{:name "stage-1" :counter 13}
-                        {:name "stage-2" :counter 14}]})))))
+                        {:name "stage-2" :counter 14}]}))))
+  (testing "should extract pipeline successful and value is nil when not with key"
+    (let [origin-instance {:name "test-pipeline" 
+             :status 15
+             :time 100}]
+             (is (= (extract-pipeline-instance-history origin-instance) 
+                {:name "test-pipeline" 
+                 :counter nil
+                 :stages '()}))))) 
 
 (run-tests 'go-visual.static_pipeline_instance_test)
