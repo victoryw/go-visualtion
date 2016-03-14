@@ -1,0 +1,2 @@
+language: clojure
+script: cd go-visual && lein clean && lein test
