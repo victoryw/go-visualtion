@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.7.0"] 
                   [clj-http "2.1.0"]
                   [org.clojure/data.json "0.2.6"]
-                  [org.clojure/tools.cli "0.3.3"]]
+                  [org.clojure/tools.cli "0.3.3"]
+                  [clj-http-fake "1.0.2"]]
   :main ^:skip-aot go-visual.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

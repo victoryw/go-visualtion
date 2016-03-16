@@ -65,7 +65,6 @@
 (defn statistic-each-pipeline-stage-run-time
   [url username password]
   (def pipelines (:pipelines (fetch-pipeline-datas url username password)))
-  ; (def statis (sort-by :counter < (map (comp  statistic-pipeline-instace extract-pipeline-instance-history) pipelines)))
   (statis-accumulate-pipeline-failure-counter 
    (map  
     (fn [statistic-pipeline status-pipeline] 
