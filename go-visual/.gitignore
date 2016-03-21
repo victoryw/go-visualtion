@@ -12,3 +12,4 @@ pom.xml.asc
 .nrepl-port
 default-url.clj
 .not_push
+*.json
