@@ -13,13 +13,14 @@
   {:name (:name pipeline) 
    :counter (:counter pipeline)
    :stages (map 
-            (fn [stages-map] {:name (get stages-map :name) :counter (get stages-map :counter)}) 
+            (fn [stages-map] {:name (get stages-map :name) :counter (get stages-map :counter) :jobs (:jobs stages-map)}) 
             (:stages pipeline))})
 
 (defn statistic-pipeline-instace
   [pipeline-instance]
   {:name (:name pipeline-instance)
    :counter (:counter pipeline-instance)
+   :end-time (:end-time pipeline-instance)
    :pipeline-run-times   (+ 1 (- 
                                (reduce + (map (comp string2number/to-number :counter) (:stages pipeline-instance))) 
                                ((comp count :stages) pipeline-instance)))})
@@ -42,6 +43,10 @@
   (if (true? (:status pipeline-instance)) 
     (assoc pipeline-instance :success (+ 1 (fn-get-last-success-rate last-accumulate-success-list)))
     (assoc pipeline-instance :success 0)))
+
+(defn statis-pipeline-end-time
+  [pipeline]
+  (assoc pipeline :end-time (:scheduled_date (last (flatten  (map :jobs (:stages pipeline)))))))
 
 (defn extract-last-pipeline-continue-failure-counter 
   [last-result]
@@ -71,7 +76,7 @@
       (assoc statistic-pipeline :status (:status status-pipeline))) 
     (sort-by :counter < 
              (map 
-              (comp  statistic-pipeline-instace extract-pipeline-instance-history) 
+              (comp  statistic-pipeline-instace statis-pipeline-end-time extract-pipeline-instance-history) 
               pipelines))
     (sort-by :counter < 
              (statis-pipeline-success-status pipelines)))))
