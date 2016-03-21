@@ -12,7 +12,8 @@
                           :categories (map #(:counter %) statis)
                           :pipelineRunTimes (map #(:pipeline-run-times %) statis)
                           :countinueSuccessCount (map #(:success %) statis)
-                          :status (map #(:status %) statis)})))
+                          :status (map #(:status %) statis)
+                          :endTime (map #(:endTime) statis)})))
 
 (defn -main
   "I don't do a whole lot ... yet."
