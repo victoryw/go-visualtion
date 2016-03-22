@@ -17,10 +17,10 @@
       (with-fake-routes {{:address url :basic-auth {username password}} 
                          (fn [reqeust] {:status 200 :headers {} :body json-body})}
         (with-redefs-fn 
-          {#'write-to-site-json (fn [statis output-file-des]  (reset! result statis))}
+          {#'spit (fn [output-file-des statis]  (reset! result statis))}
           (fn [] 
             (-main "--url"  url  "--username"  username "--password" password "--startedTime" startedTime "--endTime" endTime)
-            (is (= '({:name "123", :counter 1, :pipeline-run-times 1, :status true, :success 1, :end-time 1458648000000}) @result)))))))
+            (is (= "{\"title\":\"123\",\"categories\":[1],\"pipelineRunTimes\":[1],\"countinueSuccessCount\":[1],\"status\":[true],\"endTime\":[null]}" @result)))))))
 
   (testing "should success when no start or end date"
     (let [username "username"
@@ -31,9 +31,9 @@
       (with-fake-routes {{:address url :basic-auth {username password}} 
                          (fn [reqeust] {:status 200 :headers {} :body json-body})}
         (with-redefs-fn 
-          {#'write-to-site-json (fn [statis output-file-des]  (reset! result statis))}
+          {#'spit (fn [output-file-des statis]  (reset! result statis))}
           (fn [] 
             (-main "--url"  url  "--username"  username "--password" password)
-            (is (= '({:name "123", :counter 1, :pipeline-run-times 1, :status true, :success 1, :end-time 100}) @result))))))))
+            (is (= "{\"title\":\"123\",\"categories\":[1],\"pipelineRunTimes\":[1],\"countinueSuccessCount\":[1],\"status\":[true],\"endTime\":[null]}" @result))))))))
 
 (run-tests 'go-visual.core-test)
