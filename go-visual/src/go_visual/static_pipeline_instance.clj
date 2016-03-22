@@ -1,10 +1,13 @@
 (ns go-visual.static_pipeline_instance
   (:require [clj-http.client :as client])
   (:require [clojure.data.json :as json])
-  (:require [go-visual.string2number :as string2number]))
+  (:require [go-visual.string2number :as string2number])
+  (:require [clj-time.coerce :as c]))
 
 (defn fetch-pipeline-datas
   [url username password]
+  ; (spit "./123.json" (json/read-str (get (client/get url {:basic-auth [username password]}) :body)
+  ;                                   :key-fn keyword))
   (json/read-str (get (client/get url {:basic-auth [username password]}) :body)
                  :key-fn keyword))
 
