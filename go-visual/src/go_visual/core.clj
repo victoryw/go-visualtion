@@ -20,6 +20,6 @@
   [& args]
 
   (let [{:keys [options arguments errors summary]} (parse-opts args (paramters/cli-options))
-        {:keys [url username password target]} options]
-    (write-to-site-json (statis/statistic-each-pipeline-stage-run-time url username password) target)))
+        {:keys [url username password target startedTime endTime]} options]
+    (write-to-site-json (statis/statistic-each-pipeline-stage-run-time url username password startedTime endTime) target)))
 

@@ -10,6 +10,12 @@
    ["-u" "--username userrname" "username" 
     :default "" 
     :parse-fn #(str %)]
+  ["-sd" "--startedTime startedTime" "startedTime" 
+   :default "" 
+   :parse-fn #(str %)]
+   ["-ed" "--endTime endTime" "endTime" 
+    :default "" 
+    :parse-fn #(str %)]
    ["-p" "--password password" "password" 
     :default ""  
     :parse-fn #(str %)]

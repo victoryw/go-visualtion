@@ -67,17 +67,26 @@
     '() 
     pipelines)))
 
+(defn filter-time-range
+  [pipelines start-time end-time]
+  (filter #(and (not (nil? (:end-time %))) (and (> (:end-time %) start-time) (< (:end-time %) end-time))) pipelines))
+
 (defn statistic-each-pipeline-stage-run-time
-  [url username password]
+  [url username password start-time-str end-time-str]
   (def pipelines (:pipelines (fetch-pipeline-datas url username password)))
+  (def start-time (c/to-long start-time-str))
+  (def end-time (c/to-long end-time-str))
+  
   (statis-accumulate-pipeline-failure-counter 
    (map  
     (fn [statistic-pipeline status-pipeline] 
       (assoc statistic-pipeline :status (:status status-pipeline))) 
     (sort-by :counter < 
              (map 
-              (comp  statistic-pipeline-instace statis-pipeline-end-time extract-pipeline-instance-history) 
-              pipelines))
+               statistic-pipeline-instace 
+               (filter-time-range  
+                 (map (comp statis-pipeline-end-time extract-pipeline-instance-history) pipelines)
+                 start-time end-time)))
     (sort-by :counter < 
              (statis-pipeline-success-status pipelines)))))
 
