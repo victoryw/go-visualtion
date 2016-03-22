@@ -20,7 +20,9 @@
                [{:name "123" 
                  :counter 1
                  :end-time 1468268260408
-                 :pipeline-run-times 1, :status true, :success 1}])))))
+                 :pipeline-run-times 1, :status true, :success 1}]))))))
+
+(deftest statis-pipeline-not-schduled-end-time
   (testing "should extract pipeline end time when with some job not scheduled"
     (let [username "username"
           password "passwword"
