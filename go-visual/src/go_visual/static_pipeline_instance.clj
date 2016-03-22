@@ -72,7 +72,10 @@
 
 (defn filter-time-range
   [pipelines start-time end-time]
-  (filter #(and (not (nil? (:end-time %))) (and (> (:end-time %) start-time) (< (:end-time %) end-time))) pipelines))
+  (if (or (nil? start-time) (nil? end-time))
+    pipelines
+    (filter #(and (not (nil? (:end-time %))) (and (> (:end-time %) start-time) (< (:end-time %) end-time))) pipelines)))
+  
 
 (defn statistic-each-pipeline-stage-run-time
   [url username password start-time-str end-time-str]

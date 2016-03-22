@@ -11,10 +11,10 @@
     :default "" 
     :parse-fn #(str %)]
    ["-sd" "--startedTime startedTime" "startedTime" 
-    :default "" 
+    :default nil
     :parse-fn #(str %)]
    ["-ed" "--endTime endTime" "endTime" 
-    :default "" 
+    :default nil
     :parse-fn #(str %)]
    ["-p" "--password password" "password" 
     :default ""  
