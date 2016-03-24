@@ -12,5 +12,8 @@
     "echarts": "^3.1.2",
     "jquery": "^2.2.1",
     "webpack": "^1.12.14"
+  },
+  "devDependencies": {
+    "webpack": "^1.12.14"
   }
 }
